@@ -1,0 +1,22 @@
+# Logs
+logs
+*.log
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Environment variables
+.env
+
+# Built files
+dist/
+build/
+out/
+*.pid
+*.lock
+
+# VS Code files
+.vscode/
