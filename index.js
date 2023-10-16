@@ -11,7 +11,7 @@ const textIn = fs.readFileSync('./txt/input.txt', 'utf-8');
 
 console.log(textIn);
 
-const textOut = `This is what we know about the avocado: ${textIn}.\nCreated on ${Date.now()}`;
+const textOut = `This is what we know about the avocado: ${textIn}.}`;
 fs.writeFileSync('./txt/output.txt', textOut);
 console.log('File written!');
 
@@ -33,6 +33,11 @@ fs.readFile('./txt/start.txt', 'utf-8', (err, data1) => {
 /////////////////////////////////////////
 // SERVER
 
+// we can use tyhe sync-version of dea-file here because we only need to read it once (when the server starts)
+// so even through sync is blocking, it's not blocking anything important
+// it won't get executed on each request, only once when the server starts
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
+
 const server = http.createServer((req, res) => {
     const pathName = req.url;
 
@@ -41,12 +46,11 @@ const server = http.createServer((req, res) => {
     } else if (pathName === '/product') {
         res.end('This is the PRODUCT');
     } else if (pathName === '/api') {
-        fs.readFile(`${__dirname}/dev-data/data.json`, 'utf-8', (err, data) => {
-            res.writeHead(200, {
-                'Content-type': 'application/json'
-            });
-            res.end(data);
+        res.writeHead(200, {
+            'Content-type': 'application/json'
         });
+        // here we have access to the data, so we can send it back to the client
+        res.end(data);
     } else {
         res.writeHead(404, {
             'Content-type': 'text/html',
