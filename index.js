@@ -38,20 +38,44 @@ fs.readFile('./txt/start.txt', 'utf-8', (err, data1) => {
 // it won't get executed on each request, only once when the server starts
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
 
+// Load the templates
+const tplOverview = fs.readFileSync(`${__dirname}/templates/overview.html`, 'utf-8');
+const tplCard = fs.readFileSync(`${__dirname}/templates/card.html`, 'utf-8');
+const tplProduct = fs.readFileSync(`${__dirname}/templates/product.html`, 'utf-8');
+
 const server = http.createServer((req, res) => {
     const pathName = req.url;
 
+    // Routing
+    //--------------------
+
+    // Overview page (home page) route
     if (pathName === '/' || pathName === '/overview') {
-        res.end('This is the OVERVIEW');
-    } else if (pathName === '/product') {
-        res.end('This is the PRODUCT');
-    } else if (pathName === '/api') {
+        res.writeHead(200, {
+            'Content-type': 'text/html'
+        });
+        res.end(tplOverview);
+    }
+
+    // Product page route
+    else if (pathName === '/product') {
+        res.writeHead(200, {
+            'Content-type': 'text/html'
+        });
+        res.end(tplProduct);
+    }
+
+    // API route
+    else if (pathName === '/api') {
         res.writeHead(200, {
             'Content-type': 'application/json'
         });
         // here we have access to the data, so we can send it back to the client
         res.end(data);
-    } else {
+    }
+
+    // Not found route
+    else {
         res.writeHead(404, {
             'Content-type': 'text/html',
             'some-custom-header': 'hello-world'
