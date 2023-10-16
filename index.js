@@ -33,7 +33,7 @@ fs.readFile('./txt/start.txt', 'utf-8', (err, data1) => {
 /////////////////////////////////////////
 // SERVER
 
-const populateCardData = (tpl, product) => {
+const populateTemplate = (tpl, product) => {
     let html = tpl.replace(/{%PRODUCT_NAME%}/g, product.productName);
     html = html.replace(/{%IMAGE%}/g, product.image);
     html = html.replace(/{%PRICE%}/g, product.price);
@@ -62,7 +62,7 @@ const tplCard = fs.readFileSync(`${__dirname}/templates/card.html`, 'utf-8');
 const tplProduct = fs.readFileSync(`${__dirname}/templates/product.html`, 'utf-8');
 
 const server = http.createServer((req, res) => {
-    const pathName = req.url;
+    const { pathname: pathName, query } = url.parse(req.url, true);
 
     // Routing
     //--------------------
@@ -74,7 +74,7 @@ const server = http.createServer((req, res) => {
         });
 
         // map over the dataObj and replace the placeholders with the actual data
-        const cardsHtml = dataObj.map(el => populateCardData(tplCard, el)).join('');
+        const cardsHtml = dataObj.map(el => populateTemplate(tplCard, el)).join('');
         const overviewHtml = tplOverview.replace('{%PRODUCT_CARDS%}', cardsHtml);
         res.end(overviewHtml);
     }
@@ -84,7 +84,10 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, {
             'Content-type': 'text/html'
         });
-        res.end(tplProduct);
+
+        const product = dataObj[query.id];
+        const productHtml = populateTemplate(tplProduct, product);
+        res.end(productHtml);
     }
 
     // API route
