@@ -33,10 +33,28 @@ fs.readFile('./txt/start.txt', 'utf-8', (err, data1) => {
 /////////////////////////////////////////
 // SERVER
 
+const populateCardData = (tpl, product) => {
+    let html = tpl.replace(/{%PRODUCT_NAME%}/g, product.productName);
+    html = html.replace(/{%IMAGE%}/g, product.image);
+    html = html.replace(/{%PRICE%}/g, product.price);
+    html = html.replace(/{%FROM%}/g, product.from);
+    html = html.replace(/{%NUTRIENTS%}/g, product.nutrients);
+    html = html.replace(/{%QUANTITY%}/g, product.quantity);
+    html = html.replace(/{%DESCRIPTION%}/g, product.description);
+    html = html.replace(/{%ID%}/g, product.id);
+
+    if (!product.organic) {
+        html = html.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+    }
+
+    return html;
+};
+
 // we can use tyhe sync-version of dea-file here because we only need to read it once (when the server starts)
 // so even through sync is blocking, it's not blocking anything important
 // it won't get executed on each request, only once when the server starts
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
+const dataObj = JSON.parse(data);
 
 // Load the templates
 const tplOverview = fs.readFileSync(`${__dirname}/templates/overview.html`, 'utf-8');
@@ -54,7 +72,11 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, {
             'Content-type': 'text/html'
         });
-        res.end(tplOverview);
+
+        // map over the dataObj and replace the placeholders with the actual data
+        const cardsHtml = dataObj.map(el => populateCardData(tplCard, el)).join('');
+        const overviewHtml = tplOverview.replace('{%PRODUCT_CARDS%}', cardsHtml);
+        res.end(overviewHtml);
     }
 
     // Product page route
