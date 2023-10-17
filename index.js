@@ -1,7 +1,12 @@
+// standard node modules
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
 
+// 3rd party modules
+const slugify = require('slugify');
+
+// custom modules
 const populateTemplate = require('./modules/populateTemplate');
 
 /////////////////////////////////////////
@@ -39,6 +44,10 @@ fs.readFile('./txt/start.txt', 'utf-8', (err, data1) => {
 // it won't get executed on each request, only once when the server starts
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
 const dataObj = JSON.parse(data);
+
+// slugify the product names
+const slugs = dataObj.map(el => slugify(el.productName, { lower: true }));
+console.log(slugs);
 
 // Load the templates
 const tplOverview = fs.readFileSync(`${__dirname}/templates/overview.html`, 'utf-8');
