@@ -1,11 +1,11 @@
 {
-  "name": "udemy-node-course",
-  "version": "1.0.0",
-  "description": "Leanrinf nodejs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Jonas Schedtman and Morne Louw",
-  "license": "ISC"
+    "name": "udemy-node-course",
+    "version": "1.0.0",
+    "description": "Learning nodejs",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Jonas Schedtman and Morne Louw",
+    "license": "ISC"
 }
